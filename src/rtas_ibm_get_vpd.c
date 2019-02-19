@@ -128,7 +128,8 @@ int main(int argc, char **argv)
 	unsigned int seq = 1, next_seq;
 	struct buf_element *list, *current;
 
-	if (get_platform() != PLATFORM_PSERIES_LPAR) {
+	if ((get_platform() != PLATFORM_PSERIES_LPAR) &&
+		(get_platform() != PLATFORM_POWERKVM_GUEST)) {
 		fprintf(stderr, "%s: is not supported on the %s platform\n",
 							argv[0], platform_name);
 		exit(1);
@@ -231,11 +232,13 @@ int main(int argc, char **argv)
 
 		if (current->size <= 0) 
 			continue;
-		
+
+		fprintf(stdout, "*");
 		count = fwrite(current->buf, 1, current->size, stdout);
 		if (count < current->size)
 			break;
 
+		fprintf(stdout, "\n");
 	} while ((current = (current->next)) != NULL);
 
 	delete_list(list);
